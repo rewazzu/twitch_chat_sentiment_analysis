@@ -199,12 +199,12 @@ stats_div.style.backgroundColor = "#efeff1"
 var svg_plot = d3.select("div#container_plot").append("svg")
   .style("position","relative")
   .style("left",0)
-  .style("top",-0.1*dim["adj"]["plot"])
+  .style("top",0)
   .style("width",dim["w"]["plot"])
-  .style("height",dim["h"]["plot"])
+  .style("height",.95*dim["h"]["plot"])
   .style("background-color","#e5e5e5")
   .style("border", "1px solid #dedee3")
-  svg_plot.attr("preserveAspectRatio","xMinYMin meet")
+  svg_plot.attr("preserveAspectRatio","xMidYMid meet")
   .attr("viewBox", "-"
         + 0 + " -"
         + dim["adj"]["plot"]+ " "
@@ -323,7 +323,7 @@ d3.json("data/vods.json").then(function(vodData) {
 
   function reloadPlot() {
     var node = document.getElementById("container_plot");
-    while (document.getElementById("container_plot").firstChild) {
+    while (node.firstChild) {
         node.removeChild(node.firstChild);
     }
      svg_plot = d3.select("div#container_plot").append("svg")
@@ -441,7 +441,7 @@ d3.json("data/vods.json").then(function(vodData) {
     .property("checked", false);
 
   userDiv.append("text")
-    .text("Username");
+    .text("Top 5 Most Active Users");
 
   userCheckbox.on("change", function() {
     if(userCheckbox.property("checked")){
@@ -502,7 +502,7 @@ d3.json("data/vods.json").then(function(vodData) {
     .property("checked", false);
 
   wordDiv.append("text")
-    .text("Word")
+    .text("Top 5 Words")
 
   wordCheckbox.on("change", function() {
     if(wordCheckbox.property("checked")){
@@ -703,7 +703,7 @@ d3.json("data/vods.json").then(function(vodData) {
     .property("checked", false);
 
   emoticonDiv.append("text")
-    .text("Emoticon")
+    .text("Top 5 Emoticons ")
 
   emoticonCheckbox.on("change", function() {
     if(emoticonCheckbox.property("checked")){
@@ -906,10 +906,10 @@ var chat_box = document.getElementById("chat_container");
     var x = d3.scaleLinear()
                 .range([dim["adj"]["plot"],(dim["w"]["plot"] + dim["adj"]["plot"] * 2)]);
     var yleft = d3.scaleLinear()
-          .range([dim["h"]["plot"],0]);
+          .range([0.9*dim["h"]["plot"],0]);
 
     var yright = d3.scaleLinear()
-          .range([dim["h"]["plot"],0]);
+          .range([0.9*dim["h"]["plot"],0]);
     // define functions :)
 
     // function to plot cumulative datasets
@@ -958,7 +958,7 @@ var chat_box = document.getElementById("chat_container");
 //       yright.domain([-1,1]);
 
       svg_plot.append("g")
-        .attr("transform","translate(0," + dim["h"]["plot"] + ")")
+        .attr("transform","translate(0," + 0.9*dim["h"]["plot"] + ")" + " ")
         .call(d3.axisBottom(x));
 
       svg_plot.append("g")
@@ -1029,7 +1029,7 @@ var chat_box = document.getElementById("chat_container");
           .attr("x1",x(current_time_plot))
           .attr("y1",0)
           .attr("x2",x(current_time_plot))
-          .attr("y2",(dim["h"]["plot"]))
+          .attr("y2",(0.9*dim["h"]["plot"]))
           .style("stroke-width",1)
           .style("stroke","black")
           .style("stroke-dasharray", ("3, 3"))
