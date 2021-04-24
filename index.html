@@ -322,6 +322,10 @@ d3.json("data/vods.json").then(function(vodData) {
   };
 
   function reloadPlot() {
+    var node = document.getElementById("container_plot");
+    while (document.getElementById("container_plot").firstChild) {
+        node.removeChild(node.firstChild);
+    }
      svg_plot = d3.select("div#container_plot").append("svg")
       .style("position","relative")
       .style("left",0)
