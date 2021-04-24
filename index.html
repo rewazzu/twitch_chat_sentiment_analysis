@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<!-- DVA Project Dashboard -->
+<head>
+  <title>Dashboard</title>
+  <style>
+  #container_chat
+  {
+    line-height: 22px;
+    background-color: #f7f7f8;
+    position: absolute;
+    border: 1px solid #dedee3;
+    overflow-y: hidden;
+    overflow-wrap: anywhere;
+    border-left: 1px solid grey;
+  }
+
+
+  user-name-positive
+  {
+    color: blue;
+    font-weight: 700;
+    font-size: 1.0rem;
+  }
+
+  user-name-neutral
+  {
+    color: 	rgb(47,79,79);
+    font-weight: 700;
+    font-size: 1.0rem;
+  }
+
+  user-name-negative
+  {
+    color: red;
+    font-weight: 700;
+    font-size: 1.0rem;
+  }
+
+  message-text
+  {
+    color: rgb(0, 0, 0);
+    font-display: 'Roobert';
+    font-weight: 400;
+  }
+
+  toptext
+  {
+    color:white;
+    font-display: 'Helvetica';
+    font-weight: 800;
+  }
+
+  subtitle-text
+  {
+    color:white;
+    font-display: 'Helvetica';
+    font-weight: 800;
+    font-size: 0.9rem;
+  }
+  </style>
+</head>
+
+<body>
+  <div id="container_all" class="svg-container"></div>
+  <div id="container_top" class="svg-container"></div>
+  <div id="container_selections" class="svg-container"></div>
+  <div id="container_plot" class="svg-container"></div>
+  <div id="container_stats" class="svg-container"></div>
+  <div id="container_chat" class="svg-container"></div>
+  <div id="container_video" class="svg-container"></div>
+
+  <script src="lib/d3/d3.min.js"></script>
+  <script src="lib/d3-dsv/d3-dsv.min.js"></script>
+  <script src="lib/d3-fetch/d3-fetch.min.js"></script>
+  <script src="https://embed.twitch.tv/embed/v1.js"></script>
+
+<script>
+
+// selections,video,plot,stats,chat
+// *************** DIMENSIONS ***************
+var user_w = window.innerWidth
+var user_h = window.innerHeight
+
+
+var dim = {
+  w: {
+    all: user_w,
+    top: user_w,
+    selections: user_w*.15,
+    video: user_w*.68,
+    plot: user_w*.68,
+    stats: user_w*.15,
+    chat: user_w*.17
+  },
+  h: {
+    all: user_h,
+    top: user_h*.05,
+    selections: user_h*.43,
+    video: user_h*.5,
+    plot: user_h*.43,
+    stats: user_h*.5,
+    chat: user_h*.93
+  },
+  margin: {
+    all: 20,
+    top: 20,
+    selections: 20,
+    video: 20,
+    plot: 20,
+    stats: 20,
+    chat: 20
+  },
+  padding: {
+    all: 20,
+    top: 20,
+    selections: 20,
+    video: 20,
+    plot: 20,
+    stats: 20,
+    chat: 20
+  },
+  adj: {
+    all: 80,
+    top: 80,
+    selections: 80,
+    video: 80,
+    plot: 80,
+    stats: 80,
+    chat: 80
+  }
+}
+
+//| window.innerHeight !== user_h
+window.addEventListener('resize', function () {
+   if (window.innerWidth !== user_w ) {
+       window.location.reload(true);
+   }})
+
+
+var div_top = document.getElementById("container_top")
+  div_top.style.position = "absolute"
+  div_top.style.left = "-4px"
+  div_top.style.top = 0
+  div_top.style.width = dim["w"]["top"] + "px"
+  div_top.style.height = dim["h"]["top"] + "px"
+  div_top.style.backgroundColor = "#6441a5"
+  div_top.style.border =  "solid 5px #ffffff"
+  div_top.style.boxShadow = "0 0 0 5px #fff inset"
+
+  title_div = document.createElement("div")
+  title_div.style.position = "absolute"
+  title_div.style.bottom = "5px"
+  title_div.style.left = -80 + "px"
+  title_div.style.width = dim["w"]["top"] + "px"
+  title_div.style.textAlign = "center"
+  title_div.innerHTML = "<toptext>Twitch Chat Sentiment Analysis</toptext>"
+  div_top.appendChild(title_div)
+// svg_top.append("text")
+// .attr("left",dim["w"]["top"]/2)
+// .attr("bottom",5)
+// .text("hello")
+// .style('fill', 'darkOrange')
+
+
+var selector = d3.select("div#container_selections")
+selector.style("position","absolute")
+selector.style("left",0)
+selector.style("top",dim["h"]["top"]+dim["h"]["video"])
+selector.style("width",dim["w"]["selections"])
+selector.style("height",dim["h"]["selections"])
+selector.style("background-color","#efeff1")
+selector.style("border", "1px solid #dedee3")
+.classed("svg-content",true);
+
+var selector_css = document.getElementById("container_selections")
+selector_css.style.top= dim["h"]["top"]+dim["h"]["video"] + "px"
+selector_css.style.left= "5px"
+selector_css.style.width =dim["w"]["selections"] + "px"
+selector_css.style.height = dim["h"]["selections"] + "px"
+
+var video = document.getElementById("container_video")
+video.style.color = "red"
+video.style.position = "absolute"
+video.style.left = dim["w"]["selections"] + "px"
+video.style.top = dim["h"]["top"] + "px"
+video.style.width =dim["w"]["video"] + "px"
+video.style.height = dim["h"]["video"] + "px"
+
+
+var stats_div = document.getElementById("container_stats")
+stats_div.style.position = "absolute"
+stats_div.style.left = "5px"
+stats_div.style.top = dim["h"]["top"] + "px"
+stats_div.style.width = dim["w"]["stats"] + "px"
+stats_div.style.height = dim["h"]["stats"] + "px"
+stats_div.style.backgroundColor = "#efeff1"
+//stats_div.style.border = "1px solid #dedee3"
+
+var svg_plot = d3.select("div#container_plot").append("svg")
+  .style("position","relative")
+  .style("left",0)
+  .style("top",-0.1*dim["adj"]["plot"])
+  .style("width",dim["w"]["plot"])
+  .style("height",dim["h"]["plot"])
+  .style("background-color","#e5e5e5")
+  .style("border", "1px solid #dedee3")
+  svg_plot.attr("preserveAspectRatio","xMinYMin meet")
+  .attr("viewBox", "-"
+        + 0 + " -"
+        + dim["adj"]["plot"]+ " "
+        + (1.2*dim["w"]["plot"]) + " "
+        + (1.2*dim["h"]["plot"] ))
+  .classed("svg-content",true);
+
+plot_div = document.getElementById("container_plot")
+plot_div.style.position = "absolute"
+plot_div.style.left = dim["w"]["selections"] + "px"
+plot_div.style.top = dim["h"]["top"]+dim["h"]["video"] + "px"
+plot_div.style.width = dim["w"]["plot"] + "px"
+plot_div.style.height = dim["h"]["plot"] + "px"
+plot_div.style.backgroundColor = "#e5e5e5"
+plot_div.style.border = "1px solid #dedee3"
+plot_div.style.overflowY = ""
+
+
+chat = document.getElementById("container_chat")
+chat.style.backgroundColor = "#f7f7f8"
+chat.style.position = "absolute"
+chat.style.left = dim["w"]["selections"]+dim["w"]["video"]+"px"
+chat.style.top = dim["h"]["top"]+ "px"
+chat.style.width = dim["w"]["chat"] + "px"
+chat.style.height = dim["h"]["chat"] + "px"
+chat.style.overflowWrap = "anywhere"
+chat.style.overflowY= "hidden"
+chat.style.border = "1px solid #dedee3"
+
+// Selections
+  //Determine options via the vod collection
+d3.json("data/vods.json").then(function(vodData) {
+  let selectedVod = vodData[0];
+  let vod_id = selectedVod.vod_id;
+  let selected_param_type = 'volume';
+  let selected_param = 'volume';
+  let selected_display = "bins";
+  var vodNames = [];
+  console.log(selectedVod);
+  vodData.forEach(function (vod) {
+    vodNames.push(vod.title)
+  });
+
+  var vodDivText = selector.append("div")
+  var vodDiv = selector.append("div");
+
+    vodDivText.append("text")
+    .attr("dy", "0em")
+    .text("Select VOD: ")
+
+  var vodSelector = vodDiv.append("select")
+    .style("left","100px")
+    .attr("name", "vod-list");
+
+  var vodOptions = vodSelector.selectAll("option")
+    .data(vodNames)
+    .enter()
+    .append("option");
+
+  vodOptions.text(function(d) {
+      return d;
+    })
+    .attr("value", function(d) {
+      return d;
+    });
+
+    function selectVod(title) {
+      var selectedVod = {};
+      vodData.forEach(function (vod) {
+        if (vod.title === title) {
+          selectedVod = vod;
+        }
+      });
+      return selectedVod;
+    };
+
+    vodSelector.on('change', function() {
+        var vodTitle = d3.select(this).property('value');
+        console.log(vodTitle);
+        selectedVod = selectVod(vodTitle);
+        vod_id =  selectedVod.vod_id;
+        console.log(selectedVod);
+        volumeCheckbox.property("checked", true);
+        userCheckbox.property("checked", false);
+        hideUsersDropdown();
+        wordCheckbox.property("checked", false);
+        hideWordsDropdown();
+        emoticonCheckbox.property("checked", false);
+        hideEmoteGrid();
+        selected_param = "volume";
+        selected_param_type = "volume";
+        selected_display = "bins";
+        clearScreen();
+        remakeScreen();
+    });
+
+  function clearScreen() {
+    var node = document.getElementById("container_plot");
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
+    clearChat();
+    clearStats();
+  };
+
+  function remakeScreen() {
+    reloadPlot();
+    reloadVideo();
+    createChat();
+    createStats();
+  };
+
+  function reloadVideo() {
+    player.setVideo(vod_id);
+  };
+
+  function reloadPlot() {
+     svg_plot = d3.select("div#container_plot").append("svg")
+      .style("position","relative")
+      .style("left",0)
+      .style("top",-0.1*dim["adj"]["plot"])
+      .style("width",dim["w"]["plot"])
+      .style("height",dim["h"]["plot"])
+      .style("background-color","#e5e5e5")
+      .style("border", "1px solid #dedee3")
+      svg_plot.attr("preserveAspectRatio","xMinYMin meet")
+      .attr("viewBox", "-"
+            + 0 + " -"
+            + dim["adj"]["plot"]+ " "
+            + (1.2*dim["w"]["plot"]) + " "
+            + (1.2*dim["h"]["plot"] ))
+      .classed("svg-content",true);
+      loadData();
+  };
+
+  //general stats
+  function createStats()
+  {
+    stats_div = document.getElementById("container_stats")
+    stats_div.style.position = "absolute"
+    stats_div.style.textAlign = "center"
+
+    var stats_emoticon_title_div = document.createElement("div")
+    stats_emoticon_title_div.style.backgroundColor = "#6441a5"
+    var stats_emoticon_div = document.createElement("div")
+    var stats_literacy_title_div = document.createElement("div")
+    stats_literacy_title_div.style.backgroundColor = "#6441a5"
+    var stats_literacy_div = document.createElement("div")
+    var stats_sentiment_title_div =  document.createElement("div")
+    stats_sentiment_title_div.style.backgroundColor = "#6441a5"
+    var stats_sentiment_div =  document.createElement("div")
+
+    stats_div.appendChild(stats_emoticon_title_div)
+    stats_div.appendChild(stats_emoticon_div)
+    stats_div.appendChild(stats_literacy_title_div)
+    stats_div.appendChild(stats_literacy_div)
+    stats_div.appendChild(stats_sentiment_title_div)
+    stats_div.appendChild(stats_sentiment_div)
+
+    stats_emoticon_div.style.position = "relative"
+    stats_emoticon_div.style.top = user_h*.05 + "px"
+
+    stats_literacy_title_div.style.position = "relative"
+    stats_literacy_title_div.style.top = user_h*.1 + "px"
+
+    stats_literacy_div.style.position = "relative"
+    stats_literacy_div.style.top = user_h*.135 + "px"
+
+    stats_sentiment_title_div.style.position = "relative"
+    stats_sentiment_title_div.style.top = user_h*.17 + "px"
+
+    stats_sentiment_div.style.position = "relative"
+    stats_sentiment_div.style.top = user_h*.19 + "px"
+
+    stats_emoticon_title_div.innerHTML = "<subtitle-text>Most Used Emoticon<\subtitle-text>"
+    stats_emoticon_div.innerHTML = "<img src=" + selectedVod.top_5_emoticons[0].url + ">"
+    stats_literacy_title_div.innerHTML = "<subtitle-text>Chat Literacy Score<\subtitle-text>"
+    stats_literacy_div.innerHTML = selectedVod.literacy_score
+    stats_sentiment_title_div.innerHTML = "<subtitle-text>Overall Chat Sentiment Score<\subtitle-text>"
+    stats_sentiment_div.innerHTML = selectedVod.avg_sentiment
+  }
+  createStats();
+
+  function clearStats()
+  {
+    node= document.getElementById("container_stats")
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
+  }
+
+
+
+
+
+//end general stats
+
+  var volumeDiv = selector.append("div")
+
+  var volumeCheckbox = volumeDiv.append("input")
+    .attr("type", "checkbox")
+    .property("checked", true)
+
+  volumeDiv.append("text")
+    .text("Chat Volume");
+
+  volumeCheckbox.on("change", function() {
+    if(volumeCheckbox.property("checked")){
+      selected_param = "volume";
+      selected_param_type = "volume";
+      selected_display = "bins";
+      console.log("show volume");
+      userCheckbox.property("checked", false);
+      hideUsersDropdown();
+      wordCheckbox.property("checked", false);
+      hideWordsDropdown();
+      emoticonCheckbox.property("checked", false);
+      hideEmoteGrid();
+      reloadPlot();
+    }
+    else{
+      console.log("hide volume");
+    }
+  });
+
+  var userDiv = selector.append("div")
+
+  var userCheckbox = userDiv.append("input")
+    .attr("type", "checkbox")
+    .property("checked", false);
+
+  userDiv.append("text")
+    .text("Username");
+
+  userCheckbox.on("change", function() {
+    if(userCheckbox.property("checked")){
+      selected_param_type = "user";
+      selected_param = selectedVod.top_5_users[0].username;
+      selected_display = 'counts';
+      console.log("show user: ", selected_param);
+      showUsersDropdown();
+      volumeCheckbox.property("checked", false);
+      wordCheckbox.property("checked", false);
+      hideWordsDropdown();
+      emoticonCheckbox.property("checked", false);
+      hideEmoteGrid();
+      reloadPlot();
+    }
+    else{
+      console.log("hide user");
+      hideUsersDropdown();
+    }
+  });
+
+  function showUsersDropdown() {
+    var usernames = [];
+    selectedVod.top_5_users.forEach(function (user) {
+      usernames.push(user.username)
+    });
+    var usersDropDown = userDiv.append("select")
+      .attr("name", "users-list")
+      .attr("class", "users-list");
+    var userOptions = usersDropDown.selectAll("option")
+      .data(usernames)
+      .enter()
+      .append("option");
+    userOptions.text(function(d) {
+        return d;
+      })
+      .attr("value", function(d) {
+        return d;
+      });
+
+    usersDropDown.on('change', function() {
+        var username = d3.select(this).property('value');
+        selected_param = username;
+        selected_display = "counts";
+        console.log("selected user: ", username);
+        reloadPlot();
+    });
+  };
+
+  function hideUsersDropdown(){
+    d3.select(".users-list").remove();
+  };
+
+  var wordDiv = selector.append("div");
+
+  var wordCheckbox = wordDiv.append("input")
+    .attr("type", "checkbox")
+    .property("checked", false);
+
+  wordDiv.append("text")
+    .text("Word")
+
+  wordCheckbox.on("change", function() {
+    if(wordCheckbox.property("checked")){
+      selected_param_type = "word";
+      selected_param = selectedVod.top_5_words[0].word;
+      selected_display = 'bins';
+      console.log("show word: ", selected_param);
+      showWordsDropdown();
+      volumeCheckbox.property("checked", false);
+      userCheckbox.property("checked", false);
+      hideUsersDropdown();
+      emoticonCheckbox.property("checked", false);
+      hideEmoteGrid();
+      reloadPlot();
+    }
+    else{
+      console.log("hide words");
+      hideWordsDropdown();
+    }
+  })
+
+  function showWordsDropdown() {
+    var words = [];
+    selectedVod.top_5_words.forEach(function (word) {
+      words.push(word.word)
+    });
+    var wordsDropDown = wordDiv.append("select")
+      .attr("name", "words-list")
+      .attr("class", "words-list");
+    var wordOptions = wordsDropDown.selectAll("option")
+      .data(words)
+      .enter()
+      .append("option");
+    wordOptions.text(function(d) {
+        return d;
+      })
+      .attr("value", function(d) {
+        return d;
+      });
+
+    wordsDropDown.on('change', function() {
+        var word = d3.select(this).property('value');
+        selected_param = word;
+        console.log("selected word: ", word);
+        reloadPlot();
+    });
+
+    var wordsRadioDiv = wordDiv.append("div")
+      .attr("class", "word-radio");
+    wordsRadioDiv.append("input")
+      .attr("type", "radio")
+      .attr("name", "word-type")
+      .attr("value", "bins")
+      .attr("checked", "checked");
+    wordsRadioDiv.append("text")
+      .text("Rate");
+    wordsRadioDiv.append("input")
+      .attr("type", "radio")
+      .attr("name", "word-type")
+      .attr("value", "counts");
+    wordsRadioDiv.append("text")
+      .text("Cumulative");
+
+    wordsRadioDiv.on('change', function() {
+        var wordPlotType = d3.select('input[name="word-type"]:checked').property("value");
+        selected_display = wordPlotType;
+        console.log("chose type: ", wordPlotType);
+        reloadPlot();
+    });
+  };
+
+  function hideWordsDropdown() {
+    d3.select(".words-list").remove();
+    d3.select(".word-radio").remove();
+  };
+
+  function showEmoteGrid() {
+    function gridData() {
+        var gData = [];
+        var xpos = 1;
+        var ypos = 1;
+        var width = 50;
+        var height = 50;
+        var click = 0;
+        var i = 0;
+        for (var row = 0; row < 2; row++) {
+            gData.push( new Array() );
+            for (var column = 0; column < 3; column++) {
+              if (row + column < 3) {
+                gData[row].push({
+                    x: xpos,
+                    y: ypos,
+                    width: width,
+                    height: height,
+                    click: click,
+                    emote: selectedVod.top_5_emoticons[i].text,
+                    url: selectedVod.top_5_emoticons[i].url
+                })
+                xpos += width;
+                i += 1;
+              }
+            }
+            xpos = 1;
+            ypos += height;
+        }
+        return gData;
+    };
+
+    selector.append("div").attr("id", "grid");
+    var gridData = gridData();
+    var grid = d3.select("#grid")
+        .append("svg")
+        .attr("width","510px")
+        .attr("height","510px");
+    var row = grid.selectAll(".row")
+        .data(gridData)
+        .enter().append("g")
+        .attr("class", "row");
+    var column = row.selectAll(".square")
+        .data(function(d) { return d; })
+        .enter().append("svg")
+        .attr("class", "grid-square")
+        .append('rect')
+        .attr("class","square")
+        .attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; })
+        .attr("width", function(d) { return d.width; })
+        .attr("height", function(d) { return d.height; })
+        .attr("id", function(d) { return d.emote; })
+        .style("fill", "#fff")
+        .style("stroke", "#222");
+
+    row.selectAll(".grid-square")
+      .append("image")
+      .attr("xlink:href", function(d){ return d.url; })
+      .attr("width", 50)
+      .attr("height", 50)
+      .attr("x", function(d) { return d.x; })
+      .attr("y", function(d) { return d.y; })
+      .on('click', function(d) {
+        for(var i = 0; i < gridData.length; i++){
+          for(var j = 0; j < gridData[i].length; j++){
+            var cell = gridData[i][j];
+            if (d.emote != cell.emote) {
+              unclick(cell);
+            }
+          }
+        }
+        d3.select('#'+d.emote).style("stroke","#2C93E8")
+          .style("stroke-width", 5);
+        selected_param = d.emote;
+        if (selected_param == "heart"){
+          selected_param = "<3"
+        }
+        console.log('clicked ' + d.emote);
+        reloadPlot();
+      });
+
+    var emoticonRadioDiv = emoticonDiv.append("div")
+      .attr("class", "emote-radio");
+    emoticonRadioDiv.append("input")
+      .attr("type", "radio")
+      .attr("name", "emote-type")
+      .attr("value", "bins")
+      .attr("checked", "checked");
+    emoticonRadioDiv.append("text")
+      .text("Rate");
+    emoticonRadioDiv.append("input")
+      .attr("type", "radio")
+      .attr("name", "emote-type")
+      .attr("value", "counts");
+    emoticonRadioDiv.append("text")
+      .text("Cumulative");
+
+    emoticonRadioDiv.on('change', function() {
+        var emoticonPlotType = d3.select('input[name="emote-type"]:checked').property("value");
+        selected_display = emoticonPlotType;
+        console.log(emoticonPlotType);
+        reloadPlot();
+    });
+
+  };
+
+  function unclick(cell) {
+    d3.select("#"+cell.emote).style("stroke", "#222")
+      .style("stroke-width", 1);
+  };
+
+  function hideEmoteGrid() {
+    d3.select("#grid").remove();
+    d3.select(".emote-radio").remove();
+  };
+
+  var emoticonDiv = selector.append("div");
+
+  var emoticonCheckbox = emoticonDiv.append("input")
+    .attr("type", "checkbox")
+    .property("checked", false);
+
+  emoticonDiv.append("text")
+    .text("Emoticon")
+
+  emoticonCheckbox.on("change", function() {
+    if(emoticonCheckbox.property("checked")){
+      selected_param_type = 'emoticon';
+      selected_param = selectedVod.top_5_emoticons[0]['text'];
+      selected_display = 'bins';
+      console.log("show emote: ", selected_param);
+      showEmoteGrid();
+      volumeCheckbox.property("checked", false);
+      wordCheckbox.property("checked", false);
+      hideWordsDropdown();
+      userCheckbox.property("checked", false);
+      hideUsersDropdown();
+      reloadPlot();
+    }
+    else{
+      console.log("hide emote");
+      hideEmoteGrid();
+    }
+  });
+
+let player = null;
+let options = null;
+function createVideo() {
+  //video
+  var options = {
+    width: dim["w"]["video"],
+    height: dim["h"]["video"],
+    video: vod_id,
+    muted: true
+  };
+   player = new Twitch.Player("container_video", options);
+};
+createVideo();
+player.setVolume(0.5);
+
+//chat
+function sleep(ms)
+{
+      return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function construct_message(document)
+{
+  var message_parts_array = []
+  var constructed_message = ""
+  const reducer = (accumulator, currentValue) => accumulator + currentValue //This is used later to concatentate the message together
+  Sentiment = document.Sentiment
+  handled_message = document.Message
+  emoticon_array = document.Emoticons
+  //Loop through emoticon array if not null
+  if(emoticon_array!==null & emoticon_array.length>0)
+  {
+    for(var j=0; j<emoticon_array.length; j++)
+    {
+      if(emoticon_array._id !="")
+      {
+        emote_id = emoticon_array[j]._id
+        //special conditional to handle pogchamp because turns out he was racist
+        if(emote_id == "88")
+        {
+          emote_id = "305954156"
+        }
+        //Take beginning of message to first emoticon
+        if(j==0)
+        {
+          message_parts_array.push(handled_message.slice(0,emoticon_array[j].begin))
+          message_parts_array.push(
+            "<img src="+ emoticon_array[j].url + ">")
+        }
+        else //Take char after previous emoticon to char before current emoticon
+        {
+        message_parts_array.push(handled_message.slice(emoticon_array[j-1].end+1, emoticon_array[j].start-1))
+        message_parts_array.push(
+          "<img src =" + emoticon_array[j].url + ">")
+        }
+      }
+    }
+    //Take char after last emoticon to char at end of message
+    last_emoticon_index = document.Emoticons.length-1
+    message_parts_array.push(handled_message.slice(document.Emoticons[last_emoticon_index].end,document.Message.length-1))
+    //Concatenate message parts together
+    constructed_message = message_parts_array.reduce(reducer)
+  }
+  else
+  {
+  constructed_message = handled_message
+  }
+  //apply styling to username in message and add line break
+  var username_style_open = "";
+  var username_style_close = "";
+  if(Sentiment === 1)
+  {
+    username_style_open = "<user-name-positive>";
+    username_style_close = "</user-name-positive>";
+  }
+  else if(Sentiment === -1)
+  {
+    username_style_open = "<user-name-negative>";
+    username_style_close = "</user-name-negative>";
+  }
+  else if(Sentiment === 0)
+  {
+    username_style_open = "<user-name-neutral>";
+    username_style_close = "</user-name-neutral>";
+  }
+
+
+  constructed_message = username_style_open +
+                        document.Username + ":" +
+                        username_style_close +
+                        constructed_message +
+                        "<br/>"
+  return constructed_message
+}
+
+function createChat() {
+    player.addEventListener(Twitch.Player.READY, function()
+    {sleep(1000).then(()=>{player.seek(5);})})
+    sleep(2000).then(()=>
+    {
+      //player.setMuted(false);
+      //Load Chat_log Data
+      var data_to_fetch = "data/messages_collection/" + vod_id + "_messages_collection.json"
+      fetch(data_to_fetch)
+      .then(response =>
+        {
+          return response.json();
+        })
+      .then(data => chat_log = data )
+      .then(() => console.log(chat_log))
+      .then(() =>
+        {
+  //Append Chatlog to Chat div
+        // Loop through messages
+        messages_to_load = 40
+        counter = 0
+        console.log(player.getCurrentTime())
+        while(chat_log[counter].Content_offset_seconds < player.getCurrentTime())
+          {
+          constructed_message = construct_message(chat_log[counter])
+          newDiv = document.createElement("div");
+          newDiv.innerHTML = constructed_message
+          if(document.getElementById("container_chat").childElementCount>messages_to_load)
+            {
+            document.querySelector("#container_chat > div:first-child").remove()
+            }
+          document.getElementById("container_chat").appendChild(newDiv)
+          counter +=1
+          //document.getElementById("chat").innerHTML += constructed_message
+          }
+        }
+      );
+    })
+  // });
+}
+
+function clearChat()
+{
+  //Clear chat if not clear
+  chat_node = document.getElementById("container_chat")
+  while(chat_node.firstChild)
+  {
+    chat_node.removeChild(chat_node.firstChild)
+  }
+}
+
+player.addEventListener(Twitch.Player.READY, function() {
+  clearChat();
+  createChat();})
+
+var chat_box = document.getElementById("chat_container");
+  var intervalId = window.setInterval(function(){
+    current_time = player.getCurrentTime()
+    console.log("current_time: ",current_time)
+    if(current_time < chat_log[counter].Content_offset_seconds-100 & counter!=0)
+    {
+      counter = 0;
+      clearChat()
+    }
+    while(chat_log[counter].Content_offset_seconds < current_time)
+    {
+      var newDiv = document.createElement("div");
+      newDiv.innerHTML = construct_message(chat_log[counter])
+      document.getElementById("container_chat").appendChild(newDiv);
+      if(document.getElementById("container_chat").childElementCount>messages_to_load)
+        {
+        document.querySelector("#container_chat > div:first-child").remove()
+        }
+      counter +=1
+    }
+  }, 100);
+
+// Plotting
+
+    var color = {"left":"blue","right":"green"};
+
+    var current_time_plot = player.getCurrentTime()
+
+    var x = d3.scaleLinear()
+                .range([dim["adj"]["plot"],(dim["w"]["plot"] + dim["adj"]["plot"] * 2)]);
+    var yleft = d3.scaleLinear()
+          .range([dim["h"]["plot"],0]);
+
+    var yright = d3.scaleLinear()
+          .range([dim["h"]["plot"],0]);
+    // define functions :)
+
+    // function to plot cumulative datasets
+
+    function Plotter(data,selected_param,selected_param_type,selected_display) {
+
+      maxBin = d3.max(data,function(d) { return d.Bin_start; });
+
+      x.domain([
+          d3.min(data,function(d) { return d.Bin_start; }),
+          d3.max(data,function(d) { return d.Bin_start; })
+          ]);
+
+      yleft.domain([0,d3.max(data,function(d) {
+
+        if (selected_display == "counts") {
+
+          if (selected_param_type == "word") {
+            return d.Cumulative_Word_Count[selected_param];
+          } else if (selected_param_type == "user") {
+            return d.User_Activity[selected_param];
+          } else if (selected_param_type == "emoticon") {
+            return d.Cumulative_Emoticon_Count[selected_param];
+          }
+        } else if (selected_display == "bins") {
+
+          if (selected_param_type == "word") {
+            return d.Word_Count[selected_param];
+          } else if (selected_param_type == "volume") {
+            return d.Volume;
+          } else if (selected_param_type == "emoticon") {
+            return d.Emoticon_Count[selected_param];
+          }
+        }
+
+        })])
+
+      yright.domain([
+        d3.min(data,function(d) {
+          return d.Average_Rolling_Sentiment;
+          }),
+        d3.max(data,function(d) {
+          return d.Average_Rolling_Sentiment;
+        })])
+
+//       yright.domain([-1,1]);
+
+      svg_plot.append("g")
+        .attr("transform","translate(0," + dim["h"]["plot"] + ")")
+        .call(d3.axisBottom(x));
+
+      svg_plot.append("g")
+        .attr("transform","translate(" + dim["adj"]["plot"] + ",0)")
+        .call(d3.axisLeft(yleft));
+
+      svg_plot.append("g")
+        .attr("transform","translate(" + (dim["adj"]["plot"] * 2 + dim["w"]["plot"]) + ",0)")
+        .call(d3.axisRight(yright));
+
+
+      // plot Rolling Average Sentiment
+
+      svg_plot.append("path")
+//         .attr("id","remove")
+        .datum(data)
+        .attr("fill","none")
+        .attr("stroke",color["right"])
+        .attr("stroke-width",1.5)
+        .attr("d",d3.line()
+          .x(function(d) {return x(d.Bin_start)})
+          .y(function(d) {return yright(d.Average_Rolling_Sentiment)})
+          )
+
+      // plot selected parameter
+      svg_plot.append("path")
+//         .attr("id","remove")
+        .datum(data)
+        .attr("fill","none")
+        .attr("stroke",color["left"])
+        .attr("stroke-width",1.5)
+        .attr("d",d3.line()
+          .x(function(d) {return x(d.Bin_start)})
+          .y(function(d) {
+
+            if (selected_display == "counts") {
+
+              if (selected_param_type == "word") {
+                return yleft(d.Cumulative_Word_Count[selected_param]);
+              } else if (selected_param_type == "user") {
+                return yleft(d.User_Activity[selected_param]);
+              } else if (selected_param_type == "emoticon") {
+                return yleft(d.Cumulative_Emoticon_Count[selected_param]);
+              }
+            } else if (selected_display == "bins") {
+
+              if (selected_param_type == "word") {
+                return yleft(d.Word_Count[selected_param]);
+              } else if (selected_param_type == "volume") {
+                return yleft(d.Volume);
+              } else if (selected_param_type == "emoticon") {
+                return yleft(d.Emoticon_Count[selected_param]);
+              }
+            }
+
+            })
+          )
+    }
+
+    function Robinhood(data,selected_param,selected_param_type,selected_display){
+
+      // Add "Robinhood" line...
+      d3.selectAll("#robin_remove").remove()
+      var current_time_plot = Math.floor(parseFloat(player.getCurrentTime())/60)*60
+      svg_plot.append("line")
+          .attr("id","robin_remove")
+          .attr("class","line")
+          .attr("x1",x(current_time_plot))
+          .attr("y1",0)
+          .attr("x2",x(current_time_plot))
+          .attr("y2",(dim["h"]["plot"]))
+          .style("stroke-width",1)
+          .style("stroke","black")
+          .style("stroke-dasharray", ("3, 3"))
+          .style("fill","none")
+
+      var circles = svg_plot.selectAll(".shapes")
+          .data(data)
+          .enter()
+
+      // append circle for left axis
+
+      circles.append("circle")
+          .filter(function(d) {
+            return d.Bin_start === current_time_plot
+          })
+          .attr("id","robin_remove")
+          .attr("r",7)
+          .attr("cx",x(current_time_plot))
+          .attr("cy",function(d) {
+
+            if (selected_display == "counts") {
+
+              if (selected_param_type == "word") {
+                return yleft(d.Cumulative_Word_Count[selected_param]);
+              } else if (selected_param_type == "user") {
+                return yleft(d.User_Activity[selected_param]);
+              } else if (selected_param_type == "emoticon") {
+                return yleft(d.Cumulative_Emoticon_Count[selected_param]);
+              }
+            } else if (selected_display == "bins") {
+
+              if (selected_param_type == "word") {
+                return yleft(d.Word_Count[selected_param]);
+              } else if (selected_param_type == "volume") {
+                return yleft(d.Volume);
+              } else if (selected_param_type == "emoticon") {
+                return yleft(d.Emoticon_Count[selected_param]);
+              }
+            }
+
+          })
+          .style("stroke-width",1)
+          .style("stroke",color["left"])
+          .style("fill","none")
+
+
+      var label_multiplier = .05 * dim["h"]["plot"];
+
+      var circle_text = svg_plot.selectAll(".circle_text")
+          .data(data)
+          .enter()
+
+      // add text to left axis circle
+
+      circle_text.append("text")
+          .filter(function(d) {
+            return d.Bin_start === current_time_plot
+          })
+          .attr("id","robin_remove")
+          .attr("x",x(current_time_plot))
+          .attr("y",function(d) {
+
+            if (selected_display == "counts") {
+
+              if (selected_param_type == "word") {
+                return yleft(d.Cumulative_Word_Count[selected_param]) - label_multiplier;
+              } else if (selected_param_type == "user") {
+                return yleft(d.User_Activity[selected_param]) - label_multiplier;
+              } else if (selected_param_type == "emoticon") {
+                return yleft(d.Cumulative_Emoticon_Count[selected_param]) - label_multiplier;
+              }
+            } else if (selected_display == "bins") {
+
+              if (selected_param_type == "word") {
+                return yleft(d.Word_Count[selected_param]) - label_multiplier;
+              } else if (selected_param_type == "volume") {
+                return yleft(d.Volume) - label_multiplier;
+              } else if (selected_param_type == "emoticon") {
+                return yleft(d.Emoticon_Count[selected_param]) - label_multiplier;
+              }
+            }
+
+          })
+          .text(function(d) {
+
+            if (selected_display == "counts") {
+
+              if (selected_param_type == "word") {
+                return Math.round((d.Cumulative_Word_Count[selected_param] + Number.EPSILON) * 100)/100;
+              } else if (selected_param_type == "user") {
+                return Math.round((d.User_Activity[selected_param] + Number.EPSILON) * 100)/100;
+              } else if (selected_param_type == "emoticon") {
+                return Math.round((d.Cumulative_Emoticon_Count[selected_param] + Number.EPSILON) * 100)/100;
+              }
+            } else if (selected_display == "bins") {
+
+              if (selected_param_type == "word") {
+                return Math.round((d.Word_Count[selected_param] + Number.EPSILON) * 100)/100;
+              } else if (selected_param_type == "volume") {
+                return Math.round((d.Volume + Number.EPSILON) * 100)/100;
+              } else if (selected_param_type == "emoticon") {
+                return Math.round((d.Emoticon_Count[selected_param] + Number.EPSILON) * 100)/100
+              }
+            }
+
+          })
+          .style("stroke",color["left"])
+
+
+      // append circle for right axis
+
+      circles.append("circle")
+          .filter(function(d) {
+            return d.Bin_start === current_time_plot
+          })
+          .attr("id","robin_remove")
+          .attr("r",7)
+          .attr("cx",x(current_time_plot))
+          .attr("cy",function(d) {
+              return yright(d.Average_Rolling_Sentiment)
+          })
+          .style("stroke-width",1)
+          .style("stroke",color["right"])
+          .style("fill","none")
+
+      // add text to right axis circle
+
+      circle_text.append("text")
+          .filter(function(d) {
+            return d.Bin_start === current_time_plot
+          })
+          .attr("id","robin_remove")
+          .attr("x",x(current_time_plot))
+          .attr("y",function(d) {
+            return yright(d.Average_Rolling_Sentiment) - label_multiplier
+            })
+          .text(function(d) {
+            return Math.round((d.Average_Rolling_Sentiment + Number.EPSILON) * 100)/100
+            })
+          .style("stroke",color["right"]);
+    }
+
+    function Labeler(selected_param,selected_param_type,selected_display) {
+
+      // labeling the Title...
+
+      if (selected_display == "counts") {
+        title_text = "Cumulative "
+      } else if (selected_display == "bins") {
+        title_text = "Instantaneous "
+      }
+
+      if (selected_param_type == "word") {
+        title_text += "Word Count: ";
+      } else if (selected_param_type == "user") {
+        title_text += "User Activity: ";
+      } else if (selected_param_type == "emoticon") {
+        title_text += "Emoticon Count: ";
+      } else if (selected_param_type == "volume") {
+        title_text += "Volume";
+      }
+
+      if (selected_param != "volume") {
+        title_text += selected_param;
+      }
+
+      // Add the text label for Title
+      svg_plot.append("text")
+//           .attr("id","remove")
+          .attr("class","title label")
+          .attr("text-anchor","middle")
+          .attr("y",-dim["adj"]["plot"]*.4)
+          .attr("x",dim["w"]["plot"]*.5 + dim["adj"]["plot"])
+          .text(title_text)
+          .style("font-weight","bold")
+
+      // Add the text label for left axis
+
+      svg_plot.append("text")
+//           .attr("id","remove")
+          .attr("class","y left label")
+          .attr("text-anchor","start")
+          .attr("y",-dim["adj"]["plot"]*.4)
+          .attr("x",dim["adj"]["plot"])
+          .text("Selected Parameter")
+          .style("stroke",color["left"])
+
+      // Add the text label for right axis
+
+      svg_plot.append("text")
+//           .attr("id","remove")
+          .attr("class","y right label")
+          .attr("text-anchor","end")
+          .attr("y",-dim["adj"]["plot"]*.4)
+          .attr("x",dim["w"]["plot"] + dim["adj"]["plot"] * 2)
+          .text("Average Rolling Sentiment")
+          .style("stroke",color["right"])
+    }
+
+    // defining data from selections
+
+    function Selections_to_Data(vod_id,selected_display) {
+      if (selected_display == "bins") {
+        return "data/bins_collection/" + vod_id + "_bins_collection.json";		// path to json
+      } else if (selected_display == "counts") {
+        return "data/counts_collection/" + vod_id + "_counts_collection.json";		// path to json
+      }
+
+    }
+    // converting selections to data with Selections_to_Data function
+
+    let selected_data = null
+    let data = null
+    function loadData() {
+      selected_data = Selections_to_Data(vod_id,selected_display)
+      d3.json(selected_data)
+        .then(function (dataset) {
+          data = dataset
+          Plotter(data,selected_param,selected_param_type,selected_display)
+          Labeler(selected_param,selected_param_type,selected_display)
+          Robinhood(data,selected_param,selected_param_type,selected_display)
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+    function RobinhoodWrapper(){
+      Robinhood(data,selected_param,selected_param_type,selected_display);
+    }
+    loadData();
+    d3.interval(RobinhoodWrapper, 500);
+});
+
+  </script>
+
+</body>

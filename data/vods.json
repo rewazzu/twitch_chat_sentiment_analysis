@@ -1,0 +1,519 @@
+[{
+		"vod_id": 330639009,
+		"title": "BlizzCon 2018 Opening Ceremony",
+		"avg_sentiment": 0.15,
+		"literacy_score": "3rd and 4th grade",
+		"top_5_users": [{
+				"username": "CanYouSmokeIt",
+				"count": 71
+			},
+			{
+				"username": "VanPercy09xd",
+				"count": 69
+			},
+			{
+				"username": "StadiaPants",
+				"count": 66
+			},
+			{
+				"username": "FadedEG",
+				"count": 64
+			},
+			{
+				"username": "2nd_hocus_pocus",
+				"count": 61
+			}
+		],
+		"top_5_emoticons": [{
+				"text": "residentsleeper",
+				"count": 8763,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/245/3.0"
+			},
+			{
+				"text": "pogchamp",
+				"count": 6815,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/305954156/3.0"
+			},
+			{
+				"text": "lul",
+				"count": 5687,
+				"url": "https://cdn.betterttv.net/emote/567b00c61ddbe1786688a633/3x"
+			},
+			{
+				"text": "smorc",
+				"count": 2521,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/52/3.0"
+			},
+			{
+				"text": "forsentake",
+				"count": 1710,
+				"url": "https://cdn.betterttv.net/emote/600c5d1582cf6865d552cbc8/3x"
+			}
+		],
+		"top_5_words": [{
+				"word": "f",
+				"count": 2593
+			},
+			{
+				"word": "diablo",
+				"count": 2530
+			},
+			{
+				"word": "hahaa",
+				"count": 1272
+			},
+			{
+				"word": "pog",
+				"count": 1156
+			},
+			{
+				"word": "bob",
+				"count": 972
+			}
+		]
+	},
+	{
+		"vod_id": 918095362,
+		"title": "Nintendo Direct",
+		"avg_sentiment": 0.01,
+		"literacy_score": "12th and 13th grade",
+		"top_5_users": [{
+				"username": "sonicpokemaster",
+				"count": 45
+			},
+			{
+				"username": "level5dagon",
+				"count": 39
+			},
+			{
+				"username": "cheezyman3",
+				"count": 38
+			},
+			{
+				"username": "sparadrap123",
+				"count": 32
+			},
+			{
+				"username": "TJBlakely",
+				"count": 32
+			}
+		],
+		"top_5_emoticons": [{
+				"text": "residentsleeper",
+				"count": 29109,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/245/3.0"
+			},
+			{
+				"text": "pogchamp",
+				"count": 10943,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/305954156/3.0"
+			},
+			{
+				"text": "komodohype",
+				"count": 2440,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/305954156/3.0"
+			},
+			{
+				"text": "lul",
+				"count": 1123,
+				"url": "https://cdn.betterttv.net/emote/567b00c61ddbe1786688a633/3x"
+			},
+			{
+				"text": "kreygasm",
+				"count": 1087,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/41/3.0"
+			}
+		],
+		"top_5_words": [{
+				"word": "#freemelee",
+				"count": 975
+			},
+			{
+				"word": "smash",
+				"count": 890
+			},
+			{
+				"word": "game",
+				"count": 788
+			},
+			{
+				"word": "2",
+				"count": 524
+			},
+			{
+				"word": "zelda",
+				"count": 500
+			}
+		]
+	},
+	{
+		"vod_id": 742973644,
+		"title": "Playstation 5 Reveal",
+		"avg_sentiment": 0.14,
+		"literacy_score": "4th and 5th grade",
+		"top_5_users": [{
+				"username": "F_ED",
+				"count": 56
+			},
+			{
+				"username": "Villenthessis",
+				"count": 42
+			},
+			{
+				"username": "kb1prototype",
+				"count": 41
+			},
+			{
+				"username": "mohamadscorpion",
+				"count": 36
+			},
+			{
+				"username": "b4d455y0",
+				"count": 34
+			}
+		],
+		"top_5_emoticons": [{
+				"text": "pogchamp",
+				"count": 14334,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/305954156/3.0"
+			},
+			{
+				"text": "kreygasm",
+				"count": 2477,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/41/3.0"
+			},
+			{
+				"text": "lul",
+				"count": 2055,
+				"url": "https://cdn.betterttv.net/emote/567b00c61ddbe1786688a633/3x"
+			},
+			{
+				"text": "babyrage",
+				"count": 1522,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/22639/3.0"
+			},
+			{
+				"text": "biblethump",
+				"count": 1473,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/86/3.0"
+			}
+		],
+		"top_5_words": [{
+				"word": "gta",
+				"count": 1031
+			},
+			{
+				"word": "2",
+				"count": 792
+			},
+			{
+				"word": "skip",
+				"count": 705
+			},
+			{
+				"word": "6",
+				"count": 641
+			},
+			{
+				"word": "ps5",
+				"count": 517
+			}
+		]
+	},
+	{
+		"vod_id": 776770697,
+		"title": "AOC Plays Among Us",
+		"avg_sentiment": 0.18,
+		"literacy_score": "4th and 5th grade",
+		"top_5_users": [{
+				"username": "Fossabot",
+				"count": 853
+			},
+			{
+				"username": "dontbedumbplz",
+				"count": 173
+			},
+			{
+				"username": "kurosaki421",
+				"count": 160
+			},
+			{
+				"username": "FR0GAN",
+				"count": 103
+			},
+			{
+				"username": "AidenWallis",
+				"count": 95
+			}
+		],
+		"top_5_emoticons": [{
+				"text": "allintovote",
+				"count": 11649,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/303785275/3.0"
+			},
+			{
+				"text": "heart",
+				"count": 8005,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/9/3.0"
+			},
+			{
+				"text": "pogchamp",
+				"count": 7966,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/305954156/3.0"
+			},
+			{
+				"text": "lul",
+				"count": 4855,
+				"url": "https://cdn.betterttv.net/emote/567b00c61ddbe1786688a633/3x"
+			},
+			{
+				"text": "bisexualpride",
+				"count": 2830,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/1064987/3.0"
+			}
+		],
+		"top_5_words": [{
+				"word": "aoc",
+				"count": 7739
+			},
+			{
+				"word": "vote",
+				"count": 6208
+			},
+			{
+				"word": "sus",
+				"count": 2691
+			},
+			{
+				"word": "trump",
+				"count": 2532
+			},
+			{
+				"word": "corpse",
+				"count": 2473
+			}
+		]
+	},
+	{
+		"vod_id": 737088748,
+		"title": "Ubisoft Forward",
+		"avg_sentiment": 0.16,
+		"literacy_score": "4th and 5th grade",
+		"top_5_users": [{
+				"username": "Villenthessis",
+				"count": 103
+			},
+			{
+				"username": "Mason_the_bucket",
+				"count": 96
+			},
+			{
+				"username": "miydro",
+				"count": 95
+			},
+			{
+				"username": "我是莫妮卡呦",
+				"count": 90
+			},
+			{
+				"username": "Zaxielo",
+				"count": 90
+			}
+		],
+		"top_5_emoticons": [{
+				"text": "residentsleeper",
+				"count": 5336,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/245/3.0"
+			},
+			{
+				"text": "pogchamp",
+				"count": 2616,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/305954156/3.0"
+			},
+			{
+				"text": "lul",
+				"count": 1532,
+				"url": "https://cdn.betterttv.net/emote/567b00c61ddbe1786688a633/3x"
+			},
+			{
+				"text": "notlikethis",
+				"count": 426,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/58765/3.0"
+			},
+			{
+				"text": "pog",
+				"count": 422,
+				"url": "https://cdn.betterttv.net/emote/5ff827395ef7d10c7912c106/3x"
+			}
+		],
+		"top_5_words": [{
+				"word": "!bonus",
+				"count": 3258
+			},
+			{
+				"word": "!freegame",
+				"count": 2211
+			},
+			{
+				"word": "game",
+				"count": 791
+			},
+			{
+				"word": "r6",
+				"count": 612
+			},
+			{
+				"word": "!giveaway",
+				"count": 462
+			}
+		]
+	},
+	{
+		"vod_id": 728229088,
+		"title": "NVIDIA RTX30 Series Launch",
+		"avg_sentiment": 0.18,
+		"literacy_score": "3rd and 4th grade",
+		"top_5_users": [{
+				"username": "Nightbot",
+				"count": 156
+			},
+			{
+				"username": "Moobot",
+				"count": 28
+			},
+			{
+				"username": "YosukeM",
+				"count": 24
+			},
+			{
+				"username": "abionikusu",
+				"count": 20
+			},
+			{
+				"username": "TeamNVIDIA_Drew",
+				"count": 20
+			}
+		],
+		"top_5_emoticons": [{
+				"text": "pogchamp",
+				"count": 4680,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/305954156/3.0"
+			},
+			{
+				"text": "residentsleeper",
+				"count": 1823,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/245/3.0"
+			},
+			{
+				"text": "lul",
+				"count": 872,
+				"url": "https://cdn.betterttv.net/emote/567b00c61ddbe1786688a633/3x"
+			},
+			{
+				"text": "pog",
+				"count": 716,
+				"url": "https://cdn.betterttv.net/emote/5ff827395ef7d10c7912c106/3x"
+			},
+			{
+				"text": "kreygasm",
+				"count": 644,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/41/3.0"
+			}
+		],
+		"top_5_words": [{
+				"word": "rip",
+				"count": 572
+			},
+			{
+				"word": "amd",
+				"count": 472
+			},
+			{
+				"word": "3090",
+				"count": 394
+			},
+			{
+				"word": "rtx",
+				"count": 385
+			},
+			{
+				"word": "lol",
+				"count": 263
+			}
+		]
+	},
+	{
+		"vod_id": 858025579,
+		"title": "Zelda OOT Speedrun",
+		"avg_sentiment": 0.1,
+		"literacy_score": "6th and 7th grade",
+		"top_5_users": [{
+				"username": "EllipticEllipsis",
+				"count": 192
+			},
+			{
+				"username": "CaioXG002",
+				"count": 157
+			},
+			{
+				"username": "ZunarSR",
+				"count": 155
+			},
+			{
+				"username": "Ace_Zephyr",
+				"count": 117
+			},
+			{
+				"username": "azder",
+				"count": 116
+			}
+		],
+		"top_5_emoticons": [{
+				"text": "zfgsmug",
+				"count": 301,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/1409678/3.0"
+			},
+			{
+				"text": "dannybmweep",
+				"count": 195,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/107957/3.0"
+			},
+			{
+				"text": "lul",
+				"count": 168,
+				"url": "https://cdn.betterttv.net/emote/567b00c61ddbe1786688a633/3x"
+			},
+			{
+				"text": "pogchamp",
+				"count": 160,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/305954156/3.0"
+			},
+			{
+				"text": "frankerz",
+				"count": 111,
+				"url": "https://static-cdn.jtvnw.net/emoticons/v1/65/3.0"
+			}
+		],
+		"top_5_words": [{
+				"word": "joke",
+				"count": 159
+			},
+			{
+				"word": "mweep",
+				"count": 144
+			},
+			{
+				"word": "gg",
+				"count": 131
+			},
+			{
+				"word": "game",
+				"count": 119
+			},
+			{
+				"word": "like",
+				"count": 112
+			}
+		]
+	}
+]
