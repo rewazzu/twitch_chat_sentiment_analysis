@@ -404,7 +404,7 @@ d3.json("data/vods.json").then(function(vodData) {
     .property("checked", true)
 
   volumeDiv.append("text")
-    .text("Chat Volume");
+    .text("Chats Per Minute");
 
   volumeCheckbox.on("change", function() {
     if(volumeCheckbox.property("checked")){
@@ -549,7 +549,7 @@ d3.json("data/vods.json").then(function(vodData) {
       .attr("value", "bins")
       .attr("checked", "checked");
     wordsRadioDiv.append("text")
-      .text("Rate");
+      .text("Per Minute");
     wordsRadioDiv.append("input")
       .attr("type", "radio")
       .attr("name", "word-type")
@@ -660,7 +660,7 @@ d3.json("data/vods.json").then(function(vodData) {
       .attr("value", "bins")
       .attr("checked", "checked");
     emoticonRadioDiv.append("text")
-      .text("Rate");
+      .text("Per Minute");
     emoticonRadioDiv.append("input")
       .attr("type", "radio")
       .attr("name", "emote-type")
@@ -1177,7 +1177,7 @@ var chat_box = document.getElementById("chat_container");
         if (selected_display == "counts") {
           y_text = "Cumulative " + selected_param + " Count "
         } else if (selected_display == "bins") {
-          y_text = selected_param + " Count per Minute "
+          y_text = selected_param + " Count Per Minute "
         }
       } else if (selected_param_type == "user") {
         title_text += "User Activity: ";
