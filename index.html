@@ -155,11 +155,6 @@ var div_top = document.getElementById("container_top")
   title_div.style.textAlign = "center"
   title_div.innerHTML = "<toptext>Twitch Chat Sentiment Analysis</toptext>"
   div_top.appendChild(title_div)
-// svg_top.append("text")
-// .attr("left",dim["w"]["top"]/2)
-// .attr("bottom",5)
-// .text("hello")
-// .style('fill', 'darkOrange')
 
 
 var selector = d3.select("div#container_selections")
@@ -399,10 +394,6 @@ d3.json("data/vods.json").then(function(vodData) {
         node.removeChild(node.firstChild);
     }
   }
-
-
-
-
 
 //end general stats
 
@@ -961,6 +952,9 @@ var chat_box = document.getElementById("chat_container");
         .attr("transform","translate(0," + 0.9*dim["h"]["plot"] + ")" + " ")
         .call(d3.axisBottom(x));
 
+      d3.axisBottom(x).tickValues("a","b","c");
+
+
       svg_plot.append("g")
         .attr("transform","translate(" + dim["adj"]["plot"] + ",0)")
         .call(d3.axisLeft(yleft));
@@ -1021,7 +1015,7 @@ var chat_box = document.getElementById("chat_container");
     function Robinhood(data,selected_param,selected_param_type,selected_display){
 
       // Add "Robinhood" line...
-      d3.selectAll("#robin_remove").remove()
+      svg_plot.selectAll("#robin_remove").remove()
       var current_time_plot = Math.floor(parseFloat(player.getCurrentTime())/60)*60
       svg_plot.append("line")
           .attr("id","robin_remove")
@@ -1041,11 +1035,10 @@ var chat_box = document.getElementById("chat_container");
 
       // append circle for left axis
 
-      circles.append("circle")
+      circles.append("circle").attr("id","robin_remove")
           .filter(function(d) {
             return d.Bin_start === current_time_plot
           })
-          .attr("id","robin_remove")
           .attr("r",7)
           .attr("cx",x(current_time_plot))
           .attr("cy",function(d) {
@@ -1084,11 +1077,10 @@ var chat_box = document.getElementById("chat_container");
 
       // add text to left axis circle
 
-      circle_text.append("text")
+      circle_text.append("text").attr("id","robin_remove")
           .filter(function(d) {
             return d.Bin_start === current_time_plot
           })
-          .attr("id","robin_remove")
           .attr("x",x(current_time_plot))
           .attr("y",function(d) {
 
@@ -1141,11 +1133,10 @@ var chat_box = document.getElementById("chat_container");
 
       // append circle for right axis
 
-      circles.append("circle")
+      circles.append("circle").attr("id","robin_remove")
           .filter(function(d) {
             return d.Bin_start === current_time_plot
           })
-          .attr("id","robin_remove")
           .attr("r",7)
           .attr("cx",x(current_time_plot))
           .attr("cy",function(d) {
@@ -1157,11 +1148,10 @@ var chat_box = document.getElementById("chat_container");
 
       // add text to right axis circle
 
-      circle_text.append("text")
+      circle_text.append("text").attr("id","robin_remove")
           .filter(function(d) {
             return d.Bin_start === current_time_plot
           })
-          .attr("id","robin_remove")
           .attr("x",x(current_time_plot))
           .attr("y",function(d) {
             return yright(d.Average_Rolling_Sentiment) - label_multiplier
@@ -1184,12 +1174,20 @@ var chat_box = document.getElementById("chat_container");
 
       if (selected_param_type == "word") {
         title_text += "Word Count: ";
+        if (selected_display == "counts") {
+          y_text = "Cumulative " + selected_param + " Count "
+        } else if (selected_display == "bins") {
+          y_text = selected_param + " Count per Minute "
+        }
       } else if (selected_param_type == "user") {
         title_text += "User Activity: ";
+        y_text = "Total Chats by " + selected_param;
       } else if (selected_param_type == "emoticon") {
         title_text += "Emoticon Count: ";
+        y_text = selected_param + " Occurence Per Minute"
       } else if (selected_param_type == "volume") {
         title_text += "Volume";
+        y_text = "Chats Per Minute";
       }
 
       if (selected_param != "volume") {
@@ -1214,7 +1212,7 @@ var chat_box = document.getElementById("chat_container");
           .attr("text-anchor","start")
           .attr("y",-dim["adj"]["plot"]*.4)
           .attr("x",dim["adj"]["plot"])
-          .text("Selected Parameter")
+          .text(y_text)
           .style("stroke",color["left"])
 
       // Add the text label for right axis
